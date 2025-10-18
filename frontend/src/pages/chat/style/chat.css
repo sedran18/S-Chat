@@ -22,15 +22,27 @@
     background: grey;
     width: 40%;
     height: 100%;
+
 }
 
 .ativo {
-    color: red;
+    color: green;
+}
+.desativado {
+    color: red
+}
+.fantasma {
+    height: 8vh;
+    width: 100%;
 }
 .conversaDiv {
-    height: 10vh;
+    height: 8vh;
     width: 100%;
     box-shadow: 0 0 6px rgba(255, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px; 
 }
 
 .sala {
