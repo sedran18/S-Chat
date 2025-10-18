@@ -1,17 +1,19 @@
 {
-  "name": "backend",
+  "name": "s-chat-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Api de um chat app com socket.io e integração com IA",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "sedran",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@google/genai": "^1.25.0",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "socket.io": "^4.8.1"
   },
