@@ -94,7 +94,9 @@
     flex: 1;
     width: 100%;
     overflow-y: auto;
-    background: #0f0f11;
+    background: url(./renderizacao-3d-de-um-fundo-abstrato-com-particulas-fluidas.jpg);
+    background-size: cover;
+    background-position: center;
     padding: 15px;
     box-sizing: border-box;
     scroll-behavior: smooth;
@@ -166,6 +168,25 @@
   font-size: 1.3rem;
   gap: 3px;
 }
+.message-container {
+    padding: 13px;
+    background: rgba(128, 128, 128, 0.699);
+    border-radius: 20px;
+    width: max-content;
+    max-width: 95%;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: black;
+    line-height: 2rem;
+    text-align: left;
+}
+.user {
+    color: #fff;
+}
+
+
+
 
 @media (max-width: 768px) {
     .conversas {
