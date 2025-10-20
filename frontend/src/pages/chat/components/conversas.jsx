@@ -1,11 +1,12 @@
 import Conversa from './conversas-componentes/conversa'
-export default function Conversas() {
+export default function Conversas({username, aoClicar, className}) {
+    
     return (
-        <div className="conversas" id="conversas">
-            <div className='fantasma'></div>
-            <Conversa nome='sedran' ativo={true}/>
-            <Conversa nome='Pública' ativo={true}/>
-            <Conversa nome='Networking' ativo={true}/>
+        <div className={className} id="conversas">
+            <div className='fantasma'>{username}</div>
+            <Conversa nome='sedran' ativo={true} aoClicar={aoClicar}/>
+            <Conversa nome='Pública' ativo={true} aoClicar={aoClicar}/>
+            <Conversa nome='Networking' ativo={true} aoClicar={aoClicar}/>
         </div>
     )
 }
