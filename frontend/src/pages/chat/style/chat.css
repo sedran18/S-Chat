@@ -1,5 +1,10 @@
 .fantasma {
     height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px;
+    font-size: 2rem;
 }
 .chat {
     height: 95vh;
@@ -198,8 +203,8 @@
 }
 
 @media (min-width: 768px) {
-    .fantasma{
-        display: none;
+    .fantasma {
+        justify-content: center;
     }
   .menu {
     display: none;

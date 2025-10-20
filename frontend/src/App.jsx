@@ -6,7 +6,7 @@ import Chat from './pages/chat/chat.jsx'
 function App() {
   return (
     <>
-      <Chat />
+      <Chat username='Gabriel' />
        {/* {!user ? (
         <Login  />
       ) : (

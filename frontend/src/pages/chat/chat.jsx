@@ -4,7 +4,7 @@ import Sala from './components/sala';
 import './style/chat.css';
 import Menu from './components/menu'
 
-export default function Chat() {
+export default function Chat({username}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleConversas = () => {
         setIsMenuOpen(!isMenuOpen); 
@@ -18,7 +18,7 @@ export default function Chat() {
     return (
         <div className='chat'>
             <Menu onMenuClick={toggleConversas}/>
-            <Conversas className={`conversas ${isMenuOpen ? 'open' : ''}`}/>
+            <Conversas className={`conversas ${isMenuOpen ? 'open' : ''}`} username={username}/>
             <Sala className={`sala ${isMenuOpen ? 'tamanhoCem' : ''}`} onSalaClick={removerConversas}/>
         </div>
     )
