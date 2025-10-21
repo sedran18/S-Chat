@@ -1,6 +1,7 @@
 const { Server } = require('socket.io');
 const socketCntrl = require('../controllers/socketController.js');
 const User = require('../models/users.js');
+const {criptografar, descriptografar} = require('../services/cryptoService.js')
 
 function initSocket(server) {
     const io = new Server(server, {
@@ -30,10 +31,12 @@ function initSocket(server) {
 
         // MENSAGEM PARA SALAS
         socket.on('mensagemParaSalas', async ({ user, msg, sala }) => {
+            //vem criptografada do lado do cliente
             try {
+                const msgDescriptografada =  descriptografar(msg);
                 const nomeSala = sala || 'Pública';
-                await socketCntrl.salvarNoBanco({ socketId: socket.id, user, msg, sala: nomeSala });
-                io.to(nomeSala).emit('mensagem', { user, msg });
+                await socketCntrl.salvarNoBanco({ socketId: socket.id, user, msg: msgDescriptografada , sala: nomeSala });
+                io.to(nomeSala).emit('mensagem', { user, msg});
             } catch {
                 socket.emit('erro', 'Erro ao enviar mensagem.');
             }
@@ -41,7 +44,9 @@ function initSocket(server) {
 
         // MENSAGEM PRIVADA
         socket.on('mensagemPrivada', async ({ toName, msg }) => {
+            //vem criptografada do lado do cliente
             try {
+                const msgDescriptografada =  descriptografar(msg);
                 const userFrom = await User.findOne({ socketId: socket.id });
                 if (!userFrom) return socket.emit('erro', 'Usuário remetente não encontrado');
 
@@ -51,7 +56,7 @@ function initSocket(server) {
                 await socketCntrl.salvarNoBanco({ socketId: socket.id, user: userFrom.nome, msg, sala: userTo.nome });
                 await socketCntrl.salvarNoBanco({ socketId: userTo.socketId, user: userFrom.nome, msg, sala: userFrom.nome });
 
-                socket.to(userTo.socketId).emit('mensagemPrivada', { de: userFrom.nome, mensagem: msg });
+                socket.to(userTo.socketId).emit('mensagemPrivada', { de: userFrom.nome, mensagem: msgDescriptografada });
             } catch {
                 socket.emit('erro', 'Erro ao enviar mensagem privada.');
             }
@@ -78,18 +83,18 @@ function initSocket(server) {
             socket.join(sala);
         });
 
-        
+
         //CONTAR USUÀRIOS ONLINE
         socket.on('usuariosOnline', () => {
-            socket.enmit('usuariosOnline', total)
+            socket.emit('usuariosOnline', total)
         });
 
 
         // DESCONECTAR
         socket.on('disconnect', async () => {
-            total -= 1;
             try {
                 const resultado = await User.deleteOne({ socketId: socket.id });
+                total -= 1;
                 if (resultado.deletedCount === 0) {
                     socket.emit('erro', 'Usuário não encontrado na desconexão.');
                 }
