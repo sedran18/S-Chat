@@ -1,84 +1,103 @@
 const { Server } = require('socket.io');
 const socketCntrl = require('../controllers/socketController.js');
-const User =require('../models/users.js');
+const User = require('../models/users.js');
 
 function initSocket(server) {
     const io = new Server(server, {
         cors: { origin: "*" }
     });
-    const total = 0;
+
+    let total = 0;
 
     io.on('connection', (socket) => {
-        total +=1;
+        total += 1;
         socket.join('Pública');
         socket.join('Networking');
 
-        //do lado do cliente primeiro vc cria o user
-        //adicionar o socket.id ao usuário
+        // LOGIN
         socket.on('login', async ({ nome }) => {
-            const user = await User.findOne({ nome });
-            if (user) {
+            try {
+                const user = await User.findOne({ nome });
+                if (!user) return socket.emit('erro', 'Usuário não encontrado');
+
                 user.socketId = socket.id;
                 await user.save();
+                socket.emit('loginSucesso', user.toJSON());
+            } catch {
+                socket.emit('erro', 'Erro ao logar. Tente novamente.');
             }
         });
 
-
-        // Mensagem recebida
+        // MENSAGEM PARA SALAS
         socket.on('mensagemParaSalas', async ({ user, msg, sala }) => {
-            // envia de volta e cada usuário salva no banco de dados pelo client side
-            const nomeSala = sala || 'Pública';
-            await socketCntrl.salvarNoBanco({socketId: socket.id, user, msg, sala})
-            io.to(nomeSala).emit('mensagem', { user, msg });
+            try {
+                const nomeSala = sala || 'Pública';
+                await socketCntrl.salvarNoBanco({ socketId: socket.id, user, msg, sala: nomeSala });
+                io.to(nomeSala).emit('mensagem', { user, msg });
+            } catch {
+                socket.emit('erro', 'Erro ao enviar mensagem.');
+            }
         });
 
+        // MENSAGEM PRIVADA
+        socket.on('mensagemPrivada', async ({ toName, msg }) => {
+            try {
+                const userFrom = await User.findOne({ socketId: socket.id });
+                if (!userFrom) return socket.emit('erro', 'Usuário remetente não encontrado');
 
+                const userTo = await User.findOne({ nome: toName });
+                if (!userTo) return socket.emit('erro', 'Usuário destinatário não encontrado');
 
-        socket.on('mensagemPrivada', async ({toName, msg}) => {
-            const userFrom = await User.findOne({socketId: socket.id}).select('name');;
-            const userTo = await User.findOne({name: toName}).select('socketId nome');
-            
-            await socketCntrl.salvarNoBanco({socketId: socket.id, user: userFrom, msg, sala: userTo.name});
-            await socketCntrl.salvarNoBanco({socketId: userTo.socketId, user: userFrom, msg, sala: userFrom});
+                await socketCntrl.salvarNoBanco({ socketId: socket.id, user: userFrom.nome, msg, sala: userTo.nome });
+                await socketCntrl.salvarNoBanco({ socketId: userTo.socketId, user: userFrom.nome, msg, sala: userFrom.nome });
 
-            socket.to(userTo.socketId).emit({de: userFrom, mensagem: msg});
-        })
+                socket.to(userTo.socketId).emit('mensagemPrivada', { de: userFrom.nome, mensagem: msg });
+            } catch {
+                socket.emit('erro', 'Erro ao enviar mensagem privada.');
+            }
+        });
 
-
-
+        // PEGAR MENSAGENS
         socket.on('pegarMensagens', async ({ sala, skip = 0, limit = 20 }) => {
             try {
                 const nomeSala = sala || 'Pública';
-
-                // Busca o usuário pelo socketId
                 const usuario = await User.findOne({ socketId: socket.id });
                 if (!usuario) return socket.emit('mensagens', { sala: nomeSala, mensagens: [] });
 
-                // Encontra a conversa
                 const conversa = usuario.conversas.find(c => c.nome === nomeSala);
-                if (!conversa) return socket.emit('mensagens', { sala: nomeSala, mensagens: [] });
+                const mensagens = conversa ? conversa.mensagens.slice(skip, skip + limit) : [];
 
-                // Paginação manual
-                const mensagens = conversa.mensagens.slice(skip, skip + limit);
-
-                // Envia para o cliente
                 socket.emit('mensagens', { sala: nomeSala, mensagens });
-            } catch (err) {
-                console.error(err);
+            } catch {
+                socket.emit('erro', 'Erro ao buscar mensagens.');
             }
         });
 
-        // Entrar em uma sala
+        // ENTRAR NA SALA
         socket.on('entrarNaSala', ({ sala }) => {
             socket.join(sala);
         });
 
-        // Desconexão
+        
+        //CONTAR USUÀRIOS ONLINE
+        socket.on('usuariosOnline', () => {
+            socket.enmit('usuariosOnline', total)
+        });
+
+
+        // DESCONECTAR
         socket.on('disconnect', async () => {
             total -= 1;
-            // Aqui você poderia remover do banco se necessário
-            await User.deleteOne({ socketId: socket.id });
+            try {
+                const resultado = await User.deleteOne({ socketId: socket.id });
+                if (resultado.deletedCount === 0) {
+                    socket.emit('erro', 'Usuário não encontrado na desconexão.');
+                }
+            } catch {
+                socket.emit('erro', 'Erro ao remover usuário ao desconectar.');
+            }
         });
+
     });
 }
 
