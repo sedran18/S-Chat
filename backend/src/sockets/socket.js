@@ -6,8 +6,10 @@ function initSocket(server) {
     const io = new Server(server, {
         cors: { origin: "*" }
     });
+    const total = 0;
 
     io.on('connection', (socket) => {
+        total +=1;
         socket.join('Pública');
         socket.join('Networking');
 
@@ -23,13 +25,26 @@ function initSocket(server) {
 
 
         // Mensagem recebida
-        socket.on('mensagem', async ({ user, msg, sala }) => {
+        socket.on('mensagemParaSalas', async ({ user, msg, sala }) => {
             // envia de volta e cada usuário salva no banco de dados pelo client side
-
             const nomeSala = sala || 'Pública';
-            socketCntrl.salvarNoBanco({socketId: socket.id, user, msg, sala})
+            await socketCntrl.salvarNoBanco({socketId: socket.id, user, msg, sala})
             io.to(nomeSala).emit('mensagem', { user, msg });
         });
+
+
+
+        socket.on('mensagemPrivada', async ({toName, msg}) => {
+            const userFrom = await User.findOne({socketId: socket.id}).select('name');;
+            const userTo = await User.findOne({name: toName}).select('socketId nome');
+            
+            await socketCntrl.salvarNoBanco({socketId: socket.id, user: userFrom, msg, sala: userTo.name});
+            await socketCntrl.salvarNoBanco({socketId: userTo.socketId, user: userFrom, msg, sala: userFrom});
+
+            socket.to(userTo.socketId).emit({de: userFrom, mensagem: msg});
+        })
+
+
 
         socket.on('pegarMensagens', async ({ sala, skip = 0, limit = 20 }) => {
             try {
@@ -53,19 +68,14 @@ function initSocket(server) {
             }
         });
 
-
-
-
-
         // Entrar em uma sala
         socket.on('entrarNaSala', ({ sala }) => {
             socket.join(sala);
-            console.log(`Socket ${socket.id} entrou na sala ${sala}`);
         });
 
         // Desconexão
         socket.on('disconnect', async () => {
-            console.log(`Usuário desconectado: ${socket.id}`);
+            total -= 1;
             // Aqui você poderia remover do banco se necessário
             await User.deleteOne({ socketId: socket.id });
         });
