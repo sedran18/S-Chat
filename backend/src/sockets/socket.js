@@ -1,7 +1,7 @@
 const { Server } = require('socket.io');
 const socketCntrl = require('../controllers/socketController.js');
 const User = require('../models/users.js');
-const {criptografar, descriptografar} = require('../services/cryptoService.js')
+const {descriptografar} = require('../services/cryptoService.js')
 
 function initSocket(server) {
     const io = new Server(server, {
@@ -92,15 +92,8 @@ function initSocket(server) {
 
         // DESCONECTAR
         socket.on('disconnect', async () => {
-            try {
-                const resultado = await User.deleteOne({ socketId: socket.id });
-                total -= 1;
-                if (resultado.deletedCount === 0) {
-                    socket.emit('erro', 'Usuário não encontrado na desconexão.');
-                }
-            } catch {
-                socket.emit('erro', 'Erro ao remover usuário ao desconectar.');
-            }
+            const resultado = await User.deleteOne({ socketId: socket.id });
+            total -= 1;
         });
 
     });

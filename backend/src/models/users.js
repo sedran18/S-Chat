@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const mensagemSchema = new mongoose.Schema({
     user: {
@@ -52,13 +53,12 @@ userSchema.methods.toJSON = function () {
 }
 
 
-userSchema.methods.gerarTokenj = async function() {
-    const token = jwt_sign({_id: this._id.toString()}, process.env.JWT_SECRET, {expiresIn: '1d'});
+userSchema.methods.gerarToken = async function() {
+    const token = jwt.sign({_id: this._id.toString()}, process.env.JWT_SECRET, {expiresIn: '1d'});
     this.tokens.push({token});
     await this.save();
-
     return token;
-}
+};
 
 
 const User = mongoose.model('User', userSchema);

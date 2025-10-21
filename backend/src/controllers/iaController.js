@@ -1,6 +1,9 @@
 const callGeminiAPI = require('../services/geminiService.js');
 
 async function getAIChatResponse(req, res) {
+    const camposEnviados = Object.keys(req.body);
+    if (camposEnviados.length !== 1 || camposEnviados === 'mensagem') return res.status(400).json({error: 'Informe campos corretos'});
+
     try {
         const aiResponse = await callGeminiAPI(req.body);
         res.json({resposta: aiResponse});
@@ -12,7 +15,11 @@ async function getAIChatResponse(req, res) {
 
 
 
-async function analyzeSentiment() {
+async function analyzeSentiment(req, res) {
+    const camposEnviados = Object.keys(req.body);
+
+    if (camposEnviados.length !== 1 || camposEnviados === 'mensagem') return res.status(400).json({error: 'Informe campos corretos'});
+
     try {
         const prompt = `Analise o sentimento das seguintes mensagens e classifique-o como "positive", "negative", "neutral" ou "mixed". Responda com apenas uma única palavra. Mensagem: "${req.body}"`;
         
@@ -23,7 +30,7 @@ async function analyzeSentiment() {
             return res.json({res: cleanedSentiment});
         }
         
-        res.send(500).json({error: 'failed'});
+        res.status(500).json({error: 'failed'});
 
     } catch (err) {
         res.status(500).json({error: "Erro ao chamar a API Gemini para análise de sentimento: " + err.message})
