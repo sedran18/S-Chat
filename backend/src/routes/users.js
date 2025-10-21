@@ -8,4 +8,6 @@ router.post('/users', userController.criarUser);
 router.delete('/users', auth, userController.deletarUser);
 
 //verificar se usuário é válido
-router.post('/users', userController.verificarUser)
+router.post('/users/verificar', userController.verificarUser);
+
+module.exports = router;

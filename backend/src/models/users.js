@@ -38,9 +38,19 @@ const userSchema = new mongoose.Schema({
     ],
     socketId: {
         type: String,
-        required: true
+        required: true,
     }
 });
+
+
+userSchema.methods.toJSON = function () {
+    const userObj = this.toObject();
+    delete userObj.tokens;
+    delete userObj._id;
+
+    return userObj;
+}
+
 
 userSchema.methods.gerarTokenj = async function() {
     const token = jwt_sign({_id: this._id.toString()}, process.env.JWT_SECRET, {expiresIn: '1d'});

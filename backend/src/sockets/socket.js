@@ -22,13 +22,38 @@ function initSocket(server) {
 
         // Mensagem recebida
         socket.on('mensagem', async ({ user, msg, sala }) => {
-            // Se não houver sala, envia para todos (menos quem enviou)
             // envia de volta e cada usuário salva no banco de dados pelo client side
 
             const nomeSala = sala || 'Pública';
-            io.to(nomeSala).emit('mensagem', { user, msg });
             socketCntrl.salvarNoBanco({socketId: socket.id, user, msg, sala})
+            io.to(nomeSala).emit('mensagem', { user, msg });
         });
+
+        socket.on('pegarMensagens', async ({ sala, skip = 0, limit = 20 }) => {
+            try {
+                const nomeSala = sala || 'Pública';
+
+                // Busca o usuário pelo socketId
+                const usuario = await User.findOne({ socketId: socket.id });
+                if (!usuario) return socket.emit('mensagens', { sala: nomeSala, mensagens: [] });
+
+                // Encontra a conversa
+                const conversa = usuario.conversas.find(c => c.nome === nomeSala);
+                if (!conversa) return socket.emit('mensagens', { sala: nomeSala, mensagens: [] });
+
+                // Paginação manual
+                const mensagens = conversa.mensagens.slice(skip, skip + limit);
+
+                // Envia para o cliente
+                socket.emit('mensagens', { sala: nomeSala, mensagens });
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+
+
+
 
         // Entrar em uma sala
         socket.on('entrarNaSala', ({ sala }) => {
