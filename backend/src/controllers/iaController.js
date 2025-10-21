@@ -20,14 +20,13 @@ async function analyzeSentiment() {
         const cleanedSentiment = sentiment.trim().toLowerCase();
 
         if (['positive', 'negative', 'neutral', 'mixed'].includes(cleanedSentiment)) {
-            return cleanedSentiment;
+            return res.json({res: cleanedSentiment});
         }
         
-        return 'failed';
+        res.send(500).json({error: 'failed'});
 
-    } catch (error) {
-        console.error("Erro ao chamar a API Gemini para análise de sentimento:", error.message);
-        return 'failed';
+    } catch (err) {
+        res.status(500).json({error: "Erro ao chamar a API Gemini para análise de sentimento: " + err.message})
     }
 }
 

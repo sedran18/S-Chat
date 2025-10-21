@@ -9,6 +9,8 @@ function initSocket(server) {
 
     io.on('connection', (socket) => {
         socket.join('Pública');
+        socket.join('Networking');
+
         //do lado do cliente primeiro vc cria o user
         //adicionar o socket.id ao usuário
         socket.on('login', async ({ nome }) => {
