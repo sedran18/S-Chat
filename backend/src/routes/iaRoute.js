@@ -3,4 +3,6 @@ const router = express.Router();
 const iaController = require('../controllers/iaController.js');
 
 router.post('/ia/resposta', iaController.getAIChatResponse);
-router.post('/ai/sentimento', iaController.analyzeSentiment);
+router.post('/ia/sentimento', iaController.analyzeSentiment);
+
+module.exports = router;

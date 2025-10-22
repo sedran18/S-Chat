@@ -1,11 +1,11 @@
 const API_KEY = process.env.GEMINI_API_KEY;
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
 async function callGeminiAPI(prompt) {
     const payload = {
         contents: [{
             parts: [{
-                text: 'Seu nome vai ser Sedran. Apenas saiba disso, caso eu perguntar sobre me responda, caso contrário não há necessidade de mencionar isso' + prompt
+                text: 'Seu nome vai ser Sedran. Apenas saiba disso, caso eu perguntar sobre me responda, caso contrário não há necessidade de mencionar isso. Responda somente o que vier a seguir: ' + prompt
             }]
         }]
     };
@@ -35,6 +35,5 @@ async function callGeminiAPI(prompt) {
 
     return text;
 }
-
 
 module.exports = callGeminiAPI;

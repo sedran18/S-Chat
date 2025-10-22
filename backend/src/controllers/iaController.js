@@ -5,7 +5,7 @@ async function getAIChatResponse(req, res) {
     if (camposEnviados.length !== 1 || camposEnviados === 'mensagem') return res.status(400).json({error: 'Informe campos corretos'});
 
     try {
-        const aiResponse = await callGeminiAPI(req.body);
+        const aiResponse = await callGeminiAPI(req.body.mensagem);
         res.json({resposta: aiResponse});
 
     } catch (error) {
