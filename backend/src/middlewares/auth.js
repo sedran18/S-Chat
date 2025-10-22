@@ -3,7 +3,7 @@ const User = require('../models/users.js');
 
 const auth = async (req, res, next) => {
     try {
-        const token = req.header('Authorization').replace('Bearer', '');
+        const token = req.header('Authorization').replace('Bearer ', '');
         if (!token) {
             return res.status(401).json({error: 'Por favot autentifique'});
         }
@@ -18,6 +18,7 @@ const auth = async (req, res, next) => {
 
         req.user = user;
         req.token = token;
+        next();
     } catch (e) {
         res.status(401).json({error: 'Token inválido ou expirado'});
     }

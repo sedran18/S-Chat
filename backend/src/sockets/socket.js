@@ -12,8 +12,8 @@ function initSocket(server) {
 
     io.on('connection', (socket) => {
         total += 1;
-        socket.join('Pública');
-        socket.join('Networking');
+        socket.join('publica');
+        socket.join('networking');
 
         // LOGIN
         socket.on('login', async ({ nome }) => {
@@ -34,7 +34,7 @@ function initSocket(server) {
             //vem criptografada do lado do cliente
             try {
                 const msgDescriptografada =  descriptografar(msg);
-                const nomeSala = sala || 'Pública';
+                const nomeSala = sala || 'publica';
                 await socketCntrl.salvarNoBanco({ socketId: socket.id, user, msg: msgDescriptografada , sala: nomeSala });
                 io.to(nomeSala).emit('mensagem', { user, msg});
             } catch {
@@ -65,7 +65,7 @@ function initSocket(server) {
         // PEGAR MENSAGENS
         socket.on('pegarMensagens', async ({ sala, skip = 0, limit = 20 }) => {
             try {
-                const nomeSala = sala || 'Pública';
+                const nomeSala = sala || 'publica';
                 const usuario = await User.findOne({ socketId: socket.id });
                 if (!usuario) return socket.emit('mensagens', { sala: nomeSala, mensagens: [] });
 
