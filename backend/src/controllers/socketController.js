@@ -1,25 +1,57 @@
 const User = require('../models/users.js');
+const path = require('path');
+const Sala = require(path.join(__dirname, '..', 'models', 'sala.js'));
 
-async function salvarNoBanco({ socketId, user, msg, sala }) {
-  const userLogado = await User.findOne({ socketId });
+async function salvarNoBancoPrivado({ remetente, destinatario, msg }) {
+  
+  const userRemetente = await User.findOne({nome: remetente }); 
+  const userReceptor = await User.findOne({ nome: destinatario });
 
-  if (!userLogado) {
-    throw new Error('Usuário não encontrado!');
+  if (!userRemetente || !userReceptor) {
+    throw new Error('Usuários não encontrados');
   }
 
-  let conversa = userLogado.conversas.find(c => c.nome === (sala || 'publica'));
+  let conversaRemetente = userRemetente.conversas.find(c => c.nome === destinatario); 
 
-  if (!conversa) {
-    conversa = { nome: sala || 'publica', mensagens: [] };
-    userLogado.conversas.push(conversa);
+  if (!conversaRemetente) {
+    conversaRemetente = { nome: destinatario, mensagens: [] };
+    userRemetente.conversas.push(conversaRemetente);
   }
-
-  conversa.mensagens.push({
-    user,
+  conversaRemetente.mensagens.push({
+    user: remetente, 
     mensagem: msg,
   });
 
-  await userLogado.save();
+  let conversaReceptor = userReceptor.conversas.find(c => c.nome === remetente); 
+
+  if (!conversaReceptor) {
+    conversaReceptor = { nome: remetente, mensagens: [] };
+    userReceptor.conversas.push(conversaReceptor);
+  }
+  conversaReceptor.mensagens.push({
+    user: remetente, 
+    mensagem: msg,
+  });
+
+  await userRemetente.save();
+  await userReceptor.save();
+  
 }
 
-module.exports =  salvarNoBanco;
+async function salvaNoBancoPublico({ user, msg, sala }) {
+    await Sala.findOneAndUpdate(
+        { nome: sala },
+        { 
+            $push: { 
+                mensagens: { user, mensagem: msg }
+            }
+        },
+        { 
+            upsert: true,
+            new: true
+        }
+    );
+}
+
+module.exports = { salvarNoBancoPrivado, salvaNoBancoPublico };
+
