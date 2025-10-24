@@ -16,30 +16,37 @@ function initSocket(server) {
     socket.join('publica');
 
     // LOGIN
-    socket.on('login', async ({ nome }) => {
+    socket.on('login', async ({nome}) => {
+        const nomeLower = nome.toLowerCase();
       try {
-        const user = await User.findOne({ nome });
+        const user = await User.findOne({nome: nomeLower});
         if (!user) return socket.emit('erro', {evento: 'login', mensagem: 'Usuário não existente. Crie um usuário no banco primeiro'});
+        //Não é possível fazer login duas vezes por motivos de segurança
+        if (user.socketId) return socket.emit('erro', {evento: 'login', mensagem: 'Não é possível fazer login novamente!'})
 
         user.socketId = socket.id;
         await user.save();
 
         socket.userNome = user.nome;
 
-        socket.emit('loginSucesso', user.toJSON());
+        socket.emit('login', user.toJSON());
       } catch (err) { 
         console.error("Erro no login:", err.message);
-        socket.emit('erro', 'Erro ao logar. Tente novamente.');
+        socket.emit('erro', {evento: 'login', mensagem: err.message});
       }
     });
 
     // MENSAGEM PARA SALAS
-    socket.on('sendMensagemParaSalas', async ({ user, msg, sala }) => {
+    socket.on('sendMensagemParaSalas', async ({mensagem, sala }) => {
       //vem criptografada do lado do cliente
-      const nomeSala = sala || 'publica'; 
+
+        if (!socket.userNome) throw new Error('Autetifique-se primeiro');
+        if (!sala || !mensagem) throw new Error('Argumentos incorretos');
+        const nomeSala = sala.toLowerCase() === 'publica'? 'publica': sala;
       try {
-        await salvaNoBancoPublico({ user, msg, sala: nomeSala });
-        io.to(nomeSala).emit('sendMensagemParaSalas', { user, msg});
+        await salvaNoBancoPublico({ user: socket.userNome, mensagem, sala: nomeSala });
+
+        io.to(nomeSala).emit('sendMensagemParaSalas', { user: socket.userNome, mensagem});
       } catch (err) {
         console.error("Erro msg sala:", err.message);
         socket.emit('erro', {evento: 'sendMensagemParaSalas', mensagem: err.message});
@@ -47,7 +54,7 @@ function initSocket(server) {
     });
 
     // MENSAGEM PRIVADA
-    socket.on('sendMensagemPrivada', async ({ toName, msg }) => {
+    socket.on('sendMensagemPrivada', async ({ toName, mensagem }) => {
       //vem criptografada do lado do cliente
       try {
         const userFromName = socket.userNome;
@@ -56,10 +63,10 @@ function initSocket(server) {
         const userTo = await User.findOne({ nome: toName });
         if (!userTo) return socket.emit('erro', {evento: 'sendMensagemPrivada', mensagem: 'Usuário destinatário não existe'});
 
-        await salvarNoBancoPrivado({ remetente: userFromName, destinatario: toName, msg});
+        await salvarNoBancoPrivado({ remetente: userFromName, destinatario: toName, mensagem});
 
 
-        socket.to(userTo.socketId).emit('sendMensagemPrivada', { de: userFromName, mensagem: msg });
+        socket.to(userTo.socketId).emit('sendMensagemPrivada', { de: userFromName, mensagem});
       } catch (err) {
                 console.error("Erro msg privada:", err.message);
         socket.emit('erro', {evento: 'sendMensagemPrivada', mensagem: err.message});
@@ -69,7 +76,8 @@ function initSocket(server) {
     // PEGAR MENSAGENS PRIVADAS
     socket.on('pegarMensagensPrivadas', async ({ destinatario}) => {
       try {
-        const usuario = await User.findOne({ socketId: socket.id });
+        if (!socket.userNome) throw new Error('Autetifique-se primeiro');
+        const usuario = await User.findOne({nome: socket.userNome});
         if (!usuario) return socket.emit('pegarMensagensPrivadas', { sala: destinatario, mensagens: [] })
         
         const conversasFoco = usuario.conversas.find(c => c.nome === destinatario);
@@ -87,23 +95,24 @@ function initSocket(server) {
     // PEGAR MENSAGENS PÚBLICAS
     socket.on('pegarMensagensPublicas', async ({limit, skip, sala}) => {
       try {
-          const nome = sala || 'publica';
+        if (!socket.userNome) throw new Error('Autetifique-se primeiro');
+          if (!sala) throw new Error('Está faltando o nome da sala');
           const pular = skip || 0;
           const limite = limit || 20; 
 
           const salaDoc = await Sala.findOne(
-            {nome: nome},  
+            {nome: sala},  
             {mensagens: {$slice: [pular, limite] } }
           );
 
           //caso não tiver conversa
           if (!salaDoc) {
-            return socket.emit('pegarMensagensPublicas', { sala: nome, mensagens: [] });
+            return socket.emit('pegarMensagensPublicas', { sala: sala, mensagens: [] });
           }
 
           const mensagens = salaDoc.mensagens;
 
-          socket.emit('pegarMensagensPublicas', { sala: nome, mensagens });
+          socket.emit('pegarMensagensPublicas', { sala: sala, mensagens });
             } catch (err) {
                 console.error("Erro pegar msg publica:", err.message);
                 socket.emit('erro', {evento: 'pegarMensagensPublicas', mensagem: err.message});
@@ -112,7 +121,14 @@ function initSocket(server) {
 
     // ENTRAR NA SALA
     socket.on('entrarNaSala', ({ sala }) => {
+        try {
+        if (!socket.userNome) throw new Error('Autetifique-se primeiro');
+        } catch (err) {
+            socket.emit('erro', {evento: 'entrarNaSala', mensagem: err.message});
+        }
+
       socket.join(sala);
+      socket.emit('entrarNaSala', 'tudo certo');
     });
 
 

@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const mensagemSchema = new mongoose.Schema({
     user: {
         type: String,
-        trim: true
+        trim: true,
+        lowercase: true
     },
     mensagem: {
         type: String,

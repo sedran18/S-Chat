@@ -2,48 +2,80 @@ const User = require('../models/users.js');
 const path = require('path');
 const Sala = require(path.join(__dirname, '..', 'models', 'sala.js'));
 
-async function salvarNoBancoPrivado({ remetente, destinatario, msg }) {
-  
-  const userRemetente = await User.findOne({nome: remetente }); 
-  const userReceptor = await User.findOne({ nome: destinatario });
+async function salvarMensagemAtomica(usuarioNome, conversaNome, mensagemObj) {
+    try {
+        const result = await User.findOneAndUpdate(
+            { 
+                nome: usuarioNome, 
+                'conversas.nome': { $ne: conversaNome } 
+            },
+            { 
+                $push: { 
+                    conversas: { 
+                        nome: conversaNome, 
+                        mensagens: [mensagemObj] 
+                    } 
+                }
+            }
+        );
 
-  if (!userRemetente || !userReceptor) {
-    throw new Error('Usuários não encontrados');
-  }
+        if (result) {
+            return; 
+        }
 
-  let conversaRemetente = userRemetente.conversas.find(c => c.nome === destinatario); 
+        await User.findOneAndUpdate(
+            { 
+                nome: usuarioNome, 
+                'conversas.nome': conversaNome 
+            },
+            {
+                $push: { 
+                    'conversas.$.mensagens': mensagemObj 
+                }
+            }
+        );
 
-  if (!conversaRemetente) {
-    conversaRemetente = { nome: destinatario, mensagens: [] };
-    userRemetente.conversas.push(conversaRemetente);
-  }
-  conversaRemetente.mensagens.push({
-    user: remetente, 
-    mensagem: msg,
-  });
-
-  let conversaReceptor = userReceptor.conversas.find(c => c.nome === remetente); 
-
-  if (!conversaReceptor) {
-    conversaReceptor = { nome: remetente, mensagens: [] };
-    userReceptor.conversas.push(conversaReceptor);
-  }
-  conversaReceptor.mensagens.push({
-    user: remetente, 
-    mensagem: msg,
-  });
-
-  await userRemetente.save();
-  await userReceptor.save();
-  
+    } catch (err) {
+        console.error(`Erro ao salvar atomicamente para ${usuarioNome}:`, err.message);
+        throw err;
+    }
 }
 
-async function salvaNoBancoPublico({ user, msg, sala }) {
+
+async function salvarNoBancoPrivado({ remetente, destinatario, mensagem }) {
+    
+    const mensagemObj = {
+        user: remetente,
+        mensagem: mensagem
+    };
+
+    const remetenteNomeLower = remetente.toLowerCase();
+    const destNomeLower = destinatario.toLowerCase();
+
+    const operacaoRemetente = salvarMensagemAtomica(
+        remetenteNomeLower, 
+        destNomeLower, 
+        mensagemObj
+    );
+    
+    const operacaoDestinatario = salvarMensagemAtomica(
+        destNomeLower, 
+        remetenteNomeLower, 
+        mensagemObj
+    );
+
+    await Promise.all([
+        operacaoRemetente,
+        operacaoDestinatario
+    ]);
+}
+
+async function salvaNoBancoPublico({ user, mensagem, sala }) {
     await Sala.findOneAndUpdate(
         { nome: sala },
         { 
             $push: { 
-                mensagens: { user, mensagem: msg }
+                mensagens: { user, mensagem: mensagem }
             }
         },
         { 
@@ -54,4 +86,3 @@ async function salvaNoBancoPublico({ user, msg, sala }) {
 }
 
 module.exports = { salvarNoBancoPrivado, salvaNoBancoPublico };
-

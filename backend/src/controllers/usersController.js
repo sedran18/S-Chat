@@ -17,11 +17,11 @@ const criarUser = async (req, res) => {
 
     if (req.body.nome.toLowerCase() === 'sedran') return res.status(400).json({error: 'Infelizmente esse nome não está disponível'})
 
-    const jaExiste = await verificarUser(req.body.nome);
+    const jaExiste = await verificarUser(req.body.nome.toLowerCase());
     if (jaExiste) return res.status(400).json({error: 'Usuário já existe no banco de dados'});
 
     try {
-      const user = new User(req.body);
+      const user = new User({nome: req.body.nome.toLowerCase()});
       await user.save();
       const token = await user.gerarToken();
       res.status(201).json({user, token});

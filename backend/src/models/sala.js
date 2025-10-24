@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const mensagemSchema = new mongoose.Schema({
     user: {
         type: String,
-        trim: true
+        trim: true,
+        required: true
+
     },
     mensagem: {
         type: String,
+        required: true
     }
 });
 
