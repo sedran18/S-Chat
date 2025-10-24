@@ -45,4 +45,4 @@ const deletarUser = async (req, res) => {
 
 
 
-module.exports = {criarUser, deletarUser, verificarUser}
+module.exports = {criarUser, deletarUser}
