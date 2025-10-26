@@ -16,6 +16,8 @@ const criarUser = async (req, res) => {
     if (verificar.length !== 1 || verificar[0] !== 'nome') return res.status(400).json({error: 'Informe os argumentos corretos'});
 
     if (req.body.nome.toLowerCase() === 'sedran') return res.status(400).json({error: 'Infelizmente esse nome não está disponível'})
+    if (req.body.nome.toLowerCase() === 'publica' || 
+    req.body.nome.toLowerCase() === 'pública') return res.status(400).json({error: 'Infelizmente esse nome não está disponível'})
 
     const jaExiste = await verificarUser(req.body.nome.toLowerCase());
     if (jaExiste) return res.status(400).json({error: 'Usuário já existe no banco de dados'});
