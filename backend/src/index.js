@@ -1,6 +1,8 @@
 require('dotenv').config();
-const conectarAoBancoDEDados = require('./config/database.js');//comente aqui para testar
-conectarAoBancoDEDados(); //comente aqui para testar
+const conectarAoBancoDEDados = require('./config/database.js');
+if (process.env.NODE_ENV !== 'test') {
+    conectarAoBancoDEDados(); 
+}; 
 const express = require('express');
 const {createServer} = require('node:http');
 const initSocket = require('./sockets/socket.js');
@@ -24,3 +26,4 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);
 })
+module.exports = {server, app}

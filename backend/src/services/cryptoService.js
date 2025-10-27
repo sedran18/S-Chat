@@ -24,10 +24,10 @@ const criptografar = (text) => {
 
 
 const descriptografar = (encryptedText) => {
-    //verificar se realmente está criptografada
-    if (!isCriptografada(text)) return text;
+  //verificar se realmente está criptografada
+  if (!isCriptografada(encryptedText)) return encryptedText;
 
-    const [ivHex, encrypted] = encryptedText.split(':');
+  const [ivHex, encrypted] = encryptedText.split(':');
     const iv = Buffer.from(ivHex, 'hex');
     const decifrador = crypto.createDecipheriv('aes-256-cbc', SECRET_KEY, iv);
     let decrypted = decifrador.update(encrypted, 'hex', 'utf8');

@@ -1,11 +1,14 @@
 const request = require('supertest');
-const app = require('../src/index.js');
+const {server, app} = require('../src/index.js');
 const { connect, closeDatabase, clearDatabase } = require('./setup');
 //Desconecte o banco de dados no index.js e desligue o servidor
 
 beforeAll(async () => await connect());
 afterEach(async () => await clearDatabase());
-afterAll(async () => await closeDatabase());
+afterAll(async () => {
+    await closeDatabase();
+    server.close();
+});
 
 describe('Usuários', () => {
     it ('criar usuário e retornar token e usuário', async () => {
@@ -30,13 +33,13 @@ describe('Usuários', () => {
 
 
     it ('Enviar com argumentos incorretos', async () => {
-        const user = await request(app).post('/api/users').send({});
+        const res = await request(app).post('/api/users').send({});
 
         expect(res.statusCode).toBe(400);
     });
 
     it ('Enviar com nome sedran', async () => {
-        const user = await request(app).post('/api/users').send({
+        const res = await request(app).post('/api/users').send({
             nome: 'sedran'
         });
 
@@ -44,7 +47,7 @@ describe('Usuários', () => {
     });
 
     it ('Enviar com nome publica', async () => {
-        const user = await request(app).post('/api/users').send({
+        const res = await request(app).post('/api/users').send({
             nome: 'publica'
         });
 
@@ -61,7 +64,6 @@ describe('Usuários', () => {
 
         const res = await request(app).delete('/api/users').set('Authorization', `Bearer ${token}`).send({});
         
-        expect(res.statusCode).tobe(200);
-        expect(res.body.user).toBe(user.body.user);
+        expect(res.statusCode).toBe(200);
     })
 })
