@@ -1,12 +1,11 @@
 import { useState } from "react"; 
-function digitarNome() {
-
+function digitarNome({onLogin}) {
     const [nome, setNome] = useState('');
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        // if (nome.trim()) {
-        //     onLogin(nome)
-        // }
+        if (nome.trim()) {
+            onLogin(nome)
+        }
     }
     return (
         <form className="loginForm">
@@ -17,7 +16,9 @@ function digitarNome() {
                 type='text' 
                 name='nome' 
                 id='nome'
-                value={nome}></input>
+                value={nome}
+                onChange={e => setNome(e.target.value)}>
+                </input>
                 
             <button  onClick={handleSubmit}>Log-in</button>
         </form>

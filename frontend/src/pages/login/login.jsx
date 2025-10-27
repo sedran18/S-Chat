@@ -6,6 +6,6 @@ export default function Login({onlogin}) {
             <h2>Bem vindo</h2>
             <p>Digite seu nome para continuar</p>
         </div>
-        <DigitarNome />
+        <DigitarNome onlogin={onlogin}/>
     </div>)
 }
