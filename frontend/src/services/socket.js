@@ -1,8 +1,10 @@
 import { io } from 'socket.io-client';
 
-const socket = io(process.env.BACK_URI, {
-    transports: ['websocket'],
-    autoConnect: true,
+const BACK_URI = import.meta.env.VITE_BACK_URI || 'http://localhost:3000';
+
+const socket = io(BACK_URI, {
+  transports: ['websocket'],
+  autoConnect: true,
 });
 
 export function login(nome) {
@@ -21,15 +23,15 @@ export function sendMensagemPrivada({ toName, mensagem }) {
 }
 
 export function pegarMensagensPrivadas(destinatario, callback) {
-    if (!destinatario) return console.error('Destinatário é obrigatório');
-    socket.emit('pegarMensagensPrivadas', { destinatario });
-    socket.once('mensagensPrivadas', callback); // só dispara uma vez
+  if (!destinatario) return console.error('Destinatário é obrigatório');
+  socket.emit('pegarMensagensPrivadas', { destinatario });
+  socket.once('pegarMensagensPrivadas', callback); 
 }
 
 export function pegarMensagensPublicas({ limit = 20, skip = 0, sala }, callback) {
-    if (!sala) return console.error('Parâmetro sala é obrigatório');
-    socket.emit('pegarMensagensPublicas', { limit, skip, sala });
-    socket.once('mensagensPublicas', callback);
+  if (!sala) return console.error('Parâmetro sala é obrigatório');
+  socket.emit('pegarMensagensPublicas', { limit, skip, sala });
+  socket.once('pegarMensagensPublicas', callback);
 }
 
 export function entrarNaSala(sala) {

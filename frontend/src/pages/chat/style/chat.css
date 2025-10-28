@@ -160,13 +160,17 @@
   left: 5%;
   top: -70px;
   width: 20%;       
-  height: 10vh;      
-  overflow: scroll; 
+  height: 10vh;    
+  overflow-x:hidden;  
+  overflow-y: auto; 
   display: flex;
   flex-wrap: wrap; 
   justify-content: flex-start;
   font-size: 1.3rem;
   gap: 3px;
+}
+.emojisLista * {
+    cursor: pointer;
 }
 .message-container {
     padding: 13px;
@@ -185,7 +189,10 @@
     color: #fff;
 }
 
-
+.conversaDiv.chat-ativo {
+  background: #0077ff;
+  color: #fff;
+}
 
 
 @media (max-width: 768px) {

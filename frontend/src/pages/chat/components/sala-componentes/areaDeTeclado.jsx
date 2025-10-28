@@ -1,42 +1,78 @@
 import { useState } from 'react';
 
-export default function AreaDoTeclado() {
+const emjlist = ['👍', '👽', '😢', '😀', '😍', '😠', '🤑', '🤖', '❤️️', '🧐', '🖖', '🙏'];
+
+export default function AreaDoTeclado({ sendMensagemParaSalas }) {
     const [mostrarEmojis, setMostrarEmojis] = useState(false);
-    const emjlist = ['👍', '👽', '😢', '😀', '😍', '😠', '🤑', '🤖', '❤️️', '🧐', '🖖', '🙏'];
     const [texto, setTexto] = useState("");
 
     const adicionarEmoji = (emoji) => {
-        setTexto(texto + emoji); 
+        setTexto(textoAtual => textoAtual + emoji);
     };
 
     const toggleEmojis = () => {
-        setMostrarEmojis(!mostrarEmojis);
+        setMostrarEmojis(estadoAtual => !estadoAtual);
+    };
+
+    const enviarMensagem = () => {
+        if (texto.trim() === '') {
+            return;
+        }
+        
+        sendMensagemParaSalas({ sala: 'publica', mensagem: texto });
+        setTexto(''); 
+        setMostrarEmojis(false);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            enviarMensagem();
+        }
     };
 
     return (
         <div className="areaDoTeclado">
-           {mostrarEmojis && (
-             <div className="emojisLista">
-               {emjlist.map((emoji, index) => (
-                 <span key={index} onClick={() => adicionarEmoji(emoji)}>
-                   {emoji}
-                 </span>
-               ))}
-             </div>
-           )}
+            {mostrarEmojis && (
+                <div className="emojisLista">
+                    {emjlist.map((emoji) => (
+                        <span
+                            key={emoji}
+                            onClick={() => adicionarEmoji(emoji)}
+                        >
+                            {emoji}
+                        </span>
+                    ))}
+                </div>
+            )}
 
-            <span className="emojis" id="emojis" onClick={toggleEmojis}>
-              😀
-            </span>
+            <button 
+                type="button" 
+                className="emojis" 
+                id="emojis" 
+                onClick={toggleEmojis}
+                aria-label="Abrir seletor de emojis"
+            >
+                😀
+            </button>
 
-            <textarea 
-                name="texto" 
-                id="texto" 
-                value={texto} 
+            <textarea
+                name="texto"
+                id="texto"
+                value={texto}
                 onChange={(e) => setTexto(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Digite sua mensagem..."
             />
 
-            <i className="fa-solid fa-paper-plane enviar"></i>
+            <button 
+                type="button" 
+                className="enviar" 
+                onClick={enviarMensagem}
+                aria-label="Enviar mensagem"
+            >
+                <i className="fa-solid fa-paper-plane"></i>
+            </button>
         </div>
     );
 }

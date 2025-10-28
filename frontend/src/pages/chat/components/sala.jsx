@@ -2,12 +2,13 @@ import DivComNome from "./sala-componentes/divcomNome";
 import AreaDeMensagem from "./sala-componentes/areaDeMensagens";
 import AreaDoTeclado from "./sala-componentes/areaDeTeclado";
 
-export default function Sala(props) {
-    return (
-        <div className={props.className} id="sala" onClick={props.onSalaClick}>
-        <DivComNome nome='Pública'/>
-        <AreaDeMensagem/>
-        <AreaDoTeclado />
-        </div>
-    )
+export default function Sala({className, onSalaClick, activeChat, aoClicarNoUser}) {
+
+  return (
+    <div className={className} id="sala" onClick={onSalaClick}>
+     <DivComNome nome={activeChat.name}/> 
+     <AreaDeMensagem activeChat={activeChat} aoClicarNoUser={aoClicarNoUser}/>
+     <AreaDoTeclado activeChat={activeChat} />
+    </div>
+  )
 }
