@@ -12,6 +12,12 @@ function App() {
  const handleLogin = async (nomeDoUsuario) => {
     setLoginErro(false); 
   try {
+   if (nomeDoUsuario === 'sedran' ||
+      nomeDoUsuario === 'pública' ||
+      nomeDoUsuario === 'publica'
+   ) {
+      return setLoginErro(true);
+   }
    const data = await criarUser(nomeDoUsuario); 
       
    const token = data.token; 
@@ -19,13 +25,14 @@ function App() {
       
    login(nomeDoUsuario); 
       
-      setUser(nomeDoUsuario);
+   setUser(nomeDoUsuario);
+
   } catch (err) {
    console.error(err.message);
    setLoginErro(true);
   }
  };
-
+   //para verificar se o usuário está online, toda vez que alguém desconectar a gente verifica se ele está na nossa lista (pouco eficiente, mas para esse caso funciona), se estiver então a gente coloca ele como desativado.
  return (
   <>
    {!user ? (

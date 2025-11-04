@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { sendMensagemParaSalas } from '../../../../services/socket';
+import { sendMensagemPrivada } from '../../../../services/socket';
+
 
 const emjlist = ['👍', '👽', '😢', '😀', '😍', '😠', '🤑', '🤖', '❤️️', '🧐', '🖖', '🙏'];
 
-export default function AreaDoTeclado({ sendMensagemParaSalas }) {
+export default function AreaDoTeclado({sala}) {
     const [mostrarEmojis, setMostrarEmojis] = useState(false);
     const [texto, setTexto] = useState("");
 
@@ -18,8 +21,11 @@ export default function AreaDoTeclado({ sendMensagemParaSalas }) {
         if (texto.trim() === '') {
             return;
         }
-        
-        sendMensagemParaSalas({ sala: 'publica', mensagem: texto });
+        if (sala === 'Pública') {
+            sendMensagemParaSalas({ sala: 'publica', mensagem: texto });
+        } else {
+            sendMensagemPrivada({toName: sala, mensagem: texto})
+        }
         setTexto(''); 
         setMostrarEmojis(false);
     };
@@ -60,6 +66,7 @@ export default function AreaDoTeclado({ sendMensagemParaSalas }) {
                 name="texto"
                 id="texto"
                 value={texto}
+                onClick={() => setMostrarEmojis(false)}
                 onChange={(e) => setTexto(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Digite sua mensagem..."

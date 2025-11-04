@@ -11,12 +11,12 @@ function DigitarNome({onLogin, loginErro}) {
   }
   return (
     <form className="loginForm" onSubmit={handleSubmit}>
-            {loginErro && (
-              <p>
+      {loginErro && (
+        <p> 
           <span className="material-symbols-outlined">warning</span> 
-                Já existe um usuário ativo com esse nome
-              </p>
-            )}
+          Já existe um usuário ativo com esse nome
+        </p>)}
+        
       <input 
         type='text' 
         name='nome' 

@@ -139,12 +139,15 @@
 }
 
 .emojis {
+    border-radius: 50%;
     position: absolute;
-    left: 6%;
-    font-size: 1.3rem;
+    left: 5%;
+    font-size: 1.4rem;
     color: #00aaff;
     cursor: pointer;
     transition: 0.2s;
+    background: none;
+    border: none;
 }
 .areaDoTeclado span:hover {
     transform: scale(1.15);
@@ -153,7 +156,15 @@
     margin-left: 5px;
     cursor: pointer;
 }
-
+.enviar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white
+}
+.enviar:hover {
+    font-size: 1.7rem;
+}
 .emojisLista {
   background: grey;
   position: absolute;
