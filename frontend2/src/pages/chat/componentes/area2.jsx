@@ -10,7 +10,7 @@ export default function Area2({atual, nomeUsuario}) {
             <NomeDaConversa nome={atual} />
             <AreaDasMensagens atual={atual}
              userName={nomeUsuario}/>
-            <AreaDoTeclado />
+            <AreaDoTeclado atual={atual}/>
         </div>
     )
 }

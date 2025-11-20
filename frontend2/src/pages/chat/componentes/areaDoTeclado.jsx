@@ -1,13 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import './areaDoTeclado.css';
+import { SocketContext } from '../../../socketContext';
 
-export default function AreaDoTeclado() {
+export default function AreaDoTeclado({atual}) {
     const [txt, setTxt] = useState('');
     const [emojisActive, setEmojisActive] = useState(false); 
     const emojisLista = ['😀', '❤️', '🙏','🤡','👍','👽','🤣','😡','🤥','🧑‍💻','👩‍💻','🚀','🛸','💻','💀','😴','🤤'];
     const inputRef = useRef(null);
     const emojiListRef = useRef(null); 
     const toggleButtonRef = useRef(null); 
+    const socket = useContext(SocketContext);
+    
     useEffect(() => {
         function handleClickOutside(event) {
             if (
@@ -35,6 +38,19 @@ export default function AreaDoTeclado() {
             }
         }, 0); 
     };
+
+    const handleSendMessage = e => {
+        const textoLimpo = txt.trim();
+        if (!textoLimpo) {
+            setTxt(''); 
+            return;
+        }
+
+        if (atual === 'Pública') {
+            socket.emit('sendMensagemParaSalas', {mensagem: textoLimpo, sala: 'publica'});
+            setTxt(''); 
+        }
+    }
 
     return (
         <div className="areaDoTeclado">
@@ -73,8 +89,13 @@ export default function AreaDoTeclado() {
                 value={txt}
                 onChange={e=>setTxt(e.target.value)}
                 ref={inputRef} 
+                onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                        handleSendMessage();
+                    }
+                }}
             />
-            <img className='enviar' width="48" height="48" src="https://img.icons8.com/fluency/48/filled-sent.png" alt="filled-sent"/>
+            <img onClick={handleSendMessage} className='enviar' width="48" height="48" src="https://img.icons8.com/fluency/48/filled-sent.png" alt="filled-sent"/>
         </div>
     )
 }

@@ -4,44 +4,66 @@ import { SocketContext } from '../../../socketContext';
 import Mensagem from './mensagem';
 
 const AreaDasMensagens = ({atual, userName}) => {
-  const [mensagens, setMensagens] = useState([]);
-  const socket = useContext(SocketContext);
+ const [mensagens, setMensagens] = useState([]);
+ const socket = useContext(SocketContext);
 
-  const pegarMensagensPublicas = ({sala}, callback) => {
-    socket.once('pegarMensagensPublicas', callback);
-    socket.emit('pegarMensagensPublicas', {sala})
+ const pegarMensagensPublicas = ({sala}, callback) => {
+  socket.once('pegarMensagensPublicas', callback);
+  socket.emit('pegarMensagensPublicas', {sala})
+ }
+
+
+ useEffect(() => {
+  setMensagens([]); 
+     
+  if (atual === 'Pública') {
+    console.log(socket.id);
+    pegarMensagensPublicas({sala: 'publica', limit: 30}, (data) => {
+    setMensagens(data.mensagens); 
+   })
   }
 
-  useEffect(() => {
-    if (atual === 'Pública') {
-        console.log(socket.id);
-        pegarMensagensPublicas({sala: 'publica'}, (data) => {
-        setMensagens(data.mensagens); 
-      })
-    }
-    return () => {
-      setMensagens([]);
-    }
-  }, [atual]);
+ }, [atual, socket]); 
+  
 
-  return (
-    <div className="areaDasMensagens">
-      {mensagens.map((msg, index) => {
-        if (msg.user === userName) {
-          return <Mensagem 
-          key={index} 
-          nome={msg.user} 
-          texto={msg.mensagem} 
-          isMine={true}
-          />
-        } else {
-          return <Mensagem 
-          key={index} 
-          nome={msg.user} 
-          texto={msg.mensagem}/>
-        }
-      })}
-    </div>
-  )
+  useEffect(() => {
+    
+    const handleNovaMensagem = (msg) => {
+      setMensagens(prev => [...prev, msg]);
+   };
+    
+    socket.on('sendMensagemParaSalas', handleNovaMensagem);
+
+    return () => {
+        socket.off('sendMensagemParaSalas', handleNovaMensagem);
+    };
+    
+  }, [socket]); 
+
+
+ return (
+  <div className="areaDasMensagens">
+   {mensagens.map((msg, index) => {
+        if (!msg || !msg.user) return null;
+        
+        const isMine = msg.user === userName;
+        const key = `${msg.user}-${index}`; 
+
+    if (isMine) {
+     return <Mensagem 
+     key={key} 
+     nome={msg.user} 
+     texto={msg.mensagem} 
+     isMine={true}
+     />
+    } else {
+     return <Mensagem 
+     key={key} 
+     nome={msg.user} 
+     texto={msg.mensagem}/>
+    }
+   })}
+  </div>
+ )
 }
 export default AreaDasMensagens;
