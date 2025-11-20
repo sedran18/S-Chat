@@ -1,0 +1,8 @@
+.menu {
+    position: absolute;
+    color: var(--text-color);
+    font-size: 2rem;
+    right: 10px;
+    top: 20px;
+    z-index: 2;
+}

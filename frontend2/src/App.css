@@ -1,0 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-bg: #13181C;
+  --secondary-bg: #2A2F3A;
+  --text-color: #EFEFEF;
+  --accent-color: #007BFF; 
+  --border-radius-lg: 30px;
+  --border-radius-md: 10px;
+}

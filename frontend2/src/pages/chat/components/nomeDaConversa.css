@@ -1,0 +1,10 @@
+.nomeDaConversa {
+    width: 100%;
+    height: 15vh;
+    background-color: var(--primary-bg);
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    color: var(--text-color);
+    letter-spacing: 0.3rem;
+}

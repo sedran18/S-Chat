@@ -4,7 +4,7 @@ import Conversa from './conversas-componentes/conversa'
 export default function Conversas({username, onChatSelect, className, activeChat, destinatario}) {
     
   const [conversas, setConversas] = useState([
-      { type: 'privada', name: 'sedran', ativo: true },
+      { type: 'ia', name: 'sedran', ativo: true },
       { type: 'sala', name: 'Pública', ativo: true }
     ]);
 

@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { sendMensagemParaSalas } from '../../../../services/socket';
 import { sendMensagemPrivada } from '../../../../services/socket';
 
-
 const emjlist = ['👍', '👽', '😢', '😀', '😍', '😠', '🤑', '🤖', '❤️️', '🧐', '🖖', '🙏'];
 
-export default function AreaDoTeclado({sala}) {
+export default function AreaDoTeclado({activeChat, msgIA}) {
     const [mostrarEmojis, setMostrarEmojis] = useState(false);
     const [texto, setTexto] = useState("");
 
@@ -21,10 +20,15 @@ export default function AreaDoTeclado({sala}) {
         if (texto.trim() === '') {
             return;
         }
-        if (sala === 'Pública') {
-            sendMensagemParaSalas({ sala: 'publica', mensagem: texto });
-        } else {
-            sendMensagemPrivada({toName: sala, mensagem: texto})
+        if (activeChat.type === 'sala') {
+            sendMensagemParaSalas({ 
+                sala: activeChat === 'Pública'? 'publica': activeChat.name, 
+                mensagem: texto 
+            });
+        } else if (activeChat.type === 'privada'){
+            sendMensagemPrivada({toName: activeChat.name, mensagem: texto})
+        } else if (activeChat.type === 'ia') {
+            msgIA(texto);
         }
         setTexto(''); 
         setMostrarEmojis(false);

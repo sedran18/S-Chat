@@ -1,0 +1,29 @@
+.login {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    padding: 10px;
+    overflow: hidden; 
+}
+
+.login::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500%;     
+    height: 500%;
+    transform: translate(-50%, -50%);
+    background:  url(C:\Users\User\OneDrive\Documentos\projetos\chatApp\s-chat\frontend2\assets\bg-main.jpg) center/cover no-repeat; 
+    animation: spin 60s linear infinite;
+    background-size: contain;
+    background-position: center;
+    z-index: -1; 
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+

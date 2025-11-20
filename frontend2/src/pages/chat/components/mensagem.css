@@ -1,0 +1,49 @@
+.mensagem {
+    display: flex;
+    margin-bottom: 8px;
+    width: 100%; 
+    padding: 0 10px;
+}
+
+.mensagem.minha {
+    justify-content: flex-end; 
+}
+
+.mensagem.outro {
+    justify-content: flex-start; 
+}
+
+.mensagem-bolha {
+    max-width: 75%; 
+    padding: 10px 12px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    word-wrap: break-word; 
+    line-height: 1.4;
+}
+
+.mensagem.minha .mensagem-bolha {
+    background-color: var(--accent-color, #007BFF); 
+    color: white;
+    border-bottom-right-radius: 4px; 
+}
+
+.mensagem.outro .mensagem-bolha {
+    background-color: var(--secondary-bg, #2A2F3A); 
+    color: var(--text-color, #EFEFEF);
+    border-bottom-left-radius: 4px; 
+}
+
+.mensagem-nome {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #b3cde3;
+}
+
+.mensagem-texto {
+    margin: 0;
+    font-size: 1rem;
+}

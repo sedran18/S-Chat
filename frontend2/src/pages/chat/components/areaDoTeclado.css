@@ -1,0 +1,60 @@
+.areaDoTeclado {
+    height: 10vh;
+    width: 100%;
+    background-color: var(--primary-bg);
+    display: flex;
+    padding: 10px ;
+    align-items: center;
+    position: relative;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+.teclado {
+  flex: 1; 
+  padding: 12px 20px;
+  border-radius: 25px;
+  background-color: var(--secondary-bg, #2A2F3A);
+  color: var(--text-color, #EFEFEF);
+  width: 80%;
+  border: 1px solid transparent;
+  outline: none;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.teclado::placeholder {
+  color: #6c757d; 
+}
+
+.teclado:focus {
+  border-color: var(--accent-color, #007BFF);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+.emojis {
+  font-size: 1.5rem; 
+  cursor: pointer;
+  line-height: 0; 
+  transition: transform 0.2s ease;
+  user-select: none; 
+}
+
+.emojis:hover {
+  transform: scale(1.2); 
+}
+.enviar {
+    max-width: 2rem;
+    cursor: pointer;
+}
+.emojis-lista {
+    background: var(--secondary-bg);
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: absolute;
+    left: 20px;
+    margin-top: -23vh;
+    border-radius: 10px;
+    width: 40vw;
+    height: 10vh;
+    overflow: auto;
+}
