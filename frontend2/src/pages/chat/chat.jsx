@@ -1,7 +1,7 @@
 import './chat.css';
-import Area2 from './components/area2';
-import Area1 from './components/area1';
-import Menu from './components/menu';
+import Area2 from './componentes/area2';
+import Area1 from './componentes/area1';
+import Menu from './componentes/menu';
 import { useState } from 'react';
 
 export default function Chat({nome}) {

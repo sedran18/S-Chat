@@ -4,4 +4,6 @@
     background: url(../../../../assets/bgConversa.jpg);
     background-position: center;
     background-size: cover;
+    overflow-y: auto;
+    padding: 10px;
 }

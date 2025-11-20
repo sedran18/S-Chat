@@ -8,7 +8,8 @@ export default function Area2({atual, nomeUsuario}) {
     return (
         <div className='areaMensagem'>
             <NomeDaConversa nome={atual} />
-            <AreaDasMensagens atual={atual} nomeUsuario={nomeUsuario}/>
+            <AreaDasMensagens atual={atual}
+             userName={nomeUsuario}/>
             <AreaDoTeclado />
         </div>
     )

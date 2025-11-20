@@ -1,14 +1,16 @@
 import './login.css';
 import Form from './components/form.jsx';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { criarUser } from '../../../services/httpServices.js'; 
-import socket, {login} from '../../../../frontend/src/services/socket.js';
+import { SocketContext } from '../../socketContext.jsx';
 
 export default function Login({ setNomeUsuario }) {
   const [inputNome, setInputNome] = useState('');
   const [erro, setErro] = useState(false);
   const [carregando, setCarregando] = useState(false); 
+  const socket = useContext(SocketContext);
+
   const navigate = useNavigate();
 
 
@@ -48,7 +50,7 @@ export default function Login({ setNomeUsuario }) {
         socket.once('login', onLoginSuccess);
         socket.once('erro', onLoginError);
 
-        login(nomeLimpo);
+        socket.emit('login', {nome: nomeLimpo});
       });
 
       if (loginResultado.success) {
