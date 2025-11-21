@@ -29,7 +29,10 @@ export default function Login({ setNomeUsuario }) {
     setCarregando(true);
 
     try {
-      await criarUser(nomeLimpo);
+      const res = await criarUser(nomeLimpo);
+      const token =  res.token;
+      localStorage.setItem("token", token);
+
       
       const loginResultado = await new Promise((resolve) => {
         

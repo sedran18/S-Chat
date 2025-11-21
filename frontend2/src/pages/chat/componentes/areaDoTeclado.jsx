@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import './areaDoTeclado.css';
 import { SocketContext } from '../../../socketContext';
 
-export default function AreaDoTeclado({atual}) {
+export default function AreaDoTeclado({atual, handleMensagensComIa}) {
     const [txt, setTxt] = useState('');
     const [emojisActive, setEmojisActive] = useState(false); 
     const emojisLista = ['😀', '❤️', '🙏','🤡','👍','👽','🤣','😡','🤥','🧑‍💻','👩‍💻','🚀','🛸','💻','💀','😴','🤤'];
@@ -49,7 +49,11 @@ export default function AreaDoTeclado({atual}) {
         if (atual === 'Pública') {
             socket.emit('sendMensagemParaSalas', {mensagem: textoLimpo, sala: 'publica'});
             setTxt(''); 
+        } else if (atual === 'sedran') {
+            handleMensagensComIa(txt);
+            setTxt('');
         }
+
     }
 
     return (

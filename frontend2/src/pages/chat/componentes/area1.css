@@ -21,3 +21,12 @@
 .none {
     display: none;
 }
+@media (min-width: 920px) {
+    .area1 {
+        position: static; 
+        width: 40%; 
+        display: block; 
+        border-radius: 0; 
+        order: -1;
+    }
+}

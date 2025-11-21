@@ -12,3 +12,7 @@
   --border-radius-lg: 30px;
   --border-radius-md: 10px;
 }
+
+body {
+   font-family: "Montserrat", sans-serif;
+}

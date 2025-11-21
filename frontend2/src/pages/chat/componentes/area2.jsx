@@ -3,14 +3,36 @@ import './nomeDaConversa.jsx'
 import NomeDaConversa from './nomeDaConversa.jsx';
 import AreaDasMensagens from './areaDasMensagens.jsx';
 import AreaDoTeclado from './areaDoTeclado.jsx';
+import { respostaIA } from '../../../../services/httpServices.js';
+import { useState } from 'react';
 
 export default function Area2({atual, nomeUsuario}) {
+const [mensagensComIa, setMensagensComIa] = useState([{user: 'sedran', mensagem: `Olá ${nomeUsuario}! Eu sou sedran a Inteligência Artificial do S-Chat. Você tem um limite de 5 mensagens, mas não tenha receio de conversar comigo 😁!`}]);
+
+const handleMensagensComIa = async (mensagem) => {
+    setMensagensComIa(prev => [
+        ...prev, 
+        {user: nomeUsuario, mensagem}, 
+        {user: 'sedran', mensagem: '...Carregando'}
+    ]);
+    const respostaFromAi = await respostaIA(mensagem);
+    
+    setMensagensComIa(prev => {
+        const mensagensSemCarregando = prev.slice(0, prev.length - 1);
+        
+        return [
+            ...mensagensSemCarregando, 
+            {user: 'sedran', mensagem: respostaFromAi.resposta}
+        ];
+    });
+}
     return (
         <div className='areaMensagem'>
             <NomeDaConversa nome={atual} />
             <AreaDasMensagens atual={atual}
-             userName={nomeUsuario}/>
-            <AreaDoTeclado atual={atual}/>
+             userName={nomeUsuario} 
+             mensagensComIa={mensagensComIa}/>
+            <AreaDoTeclado atual={atual} handleMensagensComIa={handleMensagensComIa}/>
         </div>
     )
 }

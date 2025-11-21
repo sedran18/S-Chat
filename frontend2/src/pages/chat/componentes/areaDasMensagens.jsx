@@ -2,14 +2,16 @@ import { useEffect, useState, useContext} from 'react';
 import './areaDasMensagens.css';
 import { SocketContext } from '../../../socketContext';
 import Mensagem from './mensagem';
+import { respostaIA } from '../../../../services/httpServices';
 
-const AreaDasMensagens = ({atual, userName}) => {
+const AreaDasMensagens = ({atual, userName, mensagensComIa}) => {
  const [mensagens, setMensagens] = useState([]);
+
  const socket = useContext(SocketContext);
 
- const pegarMensagensPublicas = ({sala}, callback) => {
+ const pegarMensagensPublicas = ({sala, limit}, callback) => {
   socket.once('pegarMensagensPublicas', callback);
-  socket.emit('pegarMensagensPublicas', {sala})
+  socket.emit('pegarMensagensPublicas', {sala, limit})
  }
 
 
@@ -18,12 +20,14 @@ const AreaDasMensagens = ({atual, userName}) => {
      
   if (atual === 'Pública') {
     console.log(socket.id);
-    pegarMensagensPublicas({sala: 'publica', limit: 30}, (data) => {
+    pegarMensagensPublicas({sala: 'publica', limit: 50}, (data) => {
     setMensagens(data.mensagens); 
    })
+  } if (atual === 'sedran') {
+    setMensagens(mensagensComIa);
   }
 
- }, [atual, socket]); 
+ }, [atual, socket, mensagensComIa]); 
   
 
   useEffect(() => {
