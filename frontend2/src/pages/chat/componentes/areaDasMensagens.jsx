@@ -30,7 +30,7 @@ useEffect(() => {
   
  if (atual === 'Pública') {
   console.log(socket.id);
-  pegarMensagensPublicas({sala: 'publica', limit: 50}, (data) => {
+  pegarMensagensPublicas({sala: 'publica', limit: 100}, (data) => {
   setMensagens(data.mensagens); 
  })
  } else if (atual === 'sedran') { 
