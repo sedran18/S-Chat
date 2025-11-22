@@ -8,14 +8,14 @@ import './mensagem.css';
  * @param {string} props.hora Horário do envio (ex: "10:30").
  * @param {boolean} props.isMine Se a mensagem foi enviada pelo usuário logado.
  */
-export default function Mensagem({ nome, texto, hora, isMine = false }) {
+export default function Mensagem({ nome, texto,  isMine = false, handleMensagemPrivada = f => f}) {
     const messageClass = isMine ? 'mensagem minha' : 'mensagem outro';
 
     return (
         <div className={messageClass}>
             <div className="mensagem-bolha">
                 {!isMine && (
-                    <div className="mensagem-nome">
+                    <div className="mensagem-nome" onClick={e=> handleMensagemPrivada(nome)}>
                         {nome}
                     </div>
                 )}

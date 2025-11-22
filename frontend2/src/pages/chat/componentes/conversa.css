@@ -5,9 +5,12 @@
     justify-content: end;
     padding: 10px;
     font-size: 1.6rem;
+    cursor: pointer;
 
 }
-
+.conversa:hover {
+    background: #0c4a8d75;
+}
 .conversa.selected-chat { 
     background: var(--accent-color, #007BFF); 
     color: white; 

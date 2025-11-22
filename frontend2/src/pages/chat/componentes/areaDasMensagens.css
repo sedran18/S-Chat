@@ -6,4 +6,17 @@
     background-size: cover;
     overflow-y: auto;
     padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent; 
+}
+
+.offline {
+    background: #fff;
+    width: 30%;
+    padding: 10px;
+    height: fit-content;
+    border-radius: 20px;
+    margin: auto;
+    font-weight: bold;
+    text-align: center;
 }

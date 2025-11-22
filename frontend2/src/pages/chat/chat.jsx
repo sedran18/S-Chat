@@ -7,6 +7,8 @@ import { useState } from 'react';
 export default function Chat({nome}) {
     const [activeArea1, setActiveArea1] = useState(true);
     const [currentChat, setCurrentChat] = useState('Pública');
+    const initialValue =  ['sedran', 'Pública']
+    const [conversas, setConversas] = useState(initialValue);
 
     const setConversaAtual = (cvrs) => {
         setCurrentChat(cvrs);
@@ -20,8 +22,16 @@ export default function Chat({nome}) {
     }
     return (
     <div className='chat'>
-        <Area2 atual={currentChat} nomeUsuario={nome}/>
+        <Area2 atual={currentChat}
+            nomeUsuario={nome}
+            setAtual={setCurrentChat}
+            setListaConversas = {setConversas}/>
         <Menu click={handleMenuClick}/>
-        <Area1 atual={currentChat} none={activeArea1} nome={nome} setConversaAtual={setConversaAtual}/>
+        <Area1 atual={currentChat}
+            none={activeArea1}
+            nome={nome}
+            setConversaAtual={setConversaAtual}
+            conversas={conversas}
+            setConversas={setConversas}/>
     </div>)
 }

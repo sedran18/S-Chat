@@ -6,8 +6,14 @@ import AreaDoTeclado from './areaDoTeclado.jsx';
 import { respostaIA } from '../../../../services/httpServices.js';
 import { useState } from 'react';
 
-export default function Area2({atual, nomeUsuario}) {
+export default function Area2({atual, nomeUsuario, setAtual, setListaConversas}) {
 const [mensagensComIa, setMensagensComIa] = useState([{user: 'sedran', mensagem: `Olá ${nomeUsuario}! Eu sou sedran a Inteligência Artificial do S-Chat. Você tem um limite de 5 mensagens, mas não tenha receio de conversar comigo 😁!`}]);
+const [mensagens, setMensagens] = useState([]);
+const [offline, setOffline] = useState(false);
+
+const handleMensagemPrivada = (nome) => {
+    setAtual(nome);
+}
 
 const handleMensagensComIa = async (mensagem) => {
     setMensagensComIa(prev => [
@@ -31,8 +37,18 @@ const handleMensagensComIa = async (mensagem) => {
             <NomeDaConversa nome={atual} />
             <AreaDasMensagens atual={atual}
              userName={nomeUsuario} 
-             mensagensComIa={mensagensComIa}/>
-            <AreaDoTeclado atual={atual} handleMensagensComIa={handleMensagensComIa}/>
+             mensagensComIa={mensagensComIa}
+             handleMensagemPrivada={handleMensagemPrivada}
+             setListaConversas = {setListaConversas}
+             mensagens={mensagens}
+             setMensagens={setMensagens}
+             offline={offline}
+             setOffline={setOffline}/>
+            <AreaDoTeclado atual={atual}
+             handleMensagensComIa={handleMensagensComIa} 
+             setMensagens={setMensagens}
+             userName={nomeUsuario}
+             setOffline={setOffline}/>
         </div>
     )
 }

@@ -2,10 +2,17 @@ import { useEffect, useState, useContext} from 'react';
 import './areaDasMensagens.css';
 import { SocketContext } from '../../../socketContext';
 import Mensagem from './mensagem';
-import { respostaIA } from '../../../../services/httpServices';
 
-const AreaDasMensagens = ({atual, userName, mensagensComIa}) => {
- const [mensagens, setMensagens] = useState([]);
+
+const AreaDasMensagens = ({atual, 
+  userName, 
+  mensagensComIa, 
+  handleMensagemPrivada, 
+  setListaConversas, 
+  mensagens, 
+  setMensagens, 
+  setOffline,
+  offline}) => {
 
  const socket = useContext(SocketContext);
 
@@ -13,36 +20,61 @@ const AreaDasMensagens = ({atual, userName, mensagensComIa}) => {
   socket.once('pegarMensagensPublicas', callback);
   socket.emit('pegarMensagensPublicas', {sala, limit})
  }
+ const pegarMensagensPrivadas = ({destinatario}, callback) => {
+    socket.once('pegarMensagensPrivadas', callback);
+    socket.emit('pegarMensagensPrivadas', {destinatario});
+ }
 
+useEffect(() => {
+ setMensagens([]); 
+  
+ if (atual === 'Pública') {
+  console.log(socket.id);
+  pegarMensagensPublicas({sala: 'publica', limit: 50}, (data) => {
+  setMensagens(data.mensagens); 
+ })
+ } else if (atual === 'sedran') { 
+  setMensagens(mensagensComIa);
+ } else { 
+  pegarMensagensPrivadas({destinatario: atual}, (data) => {
+   setMensagens(data.mensagens);
+  });
+ }
 
- useEffect(() => {
-  setMensagens([]); 
-     
-  if (atual === 'Pública') {
-    console.log(socket.id);
-    pegarMensagensPublicas({sala: 'publica', limit: 50}, (data) => {
-    setMensagens(data.mensagens); 
-   })
-  } if (atual === 'sedran') {
-    setMensagens(mensagensComIa);
-  }
-
- }, [atual, socket, mensagensComIa]); 
+}, [atual, socket, mensagensComIa]);
   
 
   useEffect(() => {
-    
-    const handleNovaMensagem = (msg) => {
-      setMensagens(prev => [...prev, msg]);
-   };
-    
-    socket.on('sendMensagemParaSalas', handleNovaMensagem);
-
-    return () => {
-        socket.off('sendMensagemParaSalas', handleNovaMensagem);
+    const handleNovaMensagemPrivada = (msg) => {
+      if (msg.de === atual) {
+      setMensagens(prev => [...prev, {user: msg.de, mensagem: msg.mensagem}]);
+      } 
+          
+          setListaConversas(prevListaConversas => {
+              if (!prevListaConversas.includes(msg.de)) {
+                  return [...prevListaConversas, msg.de];
+              }
+              return prevListaConversas; 
+          });
     };
-    
-  }, [socket]); 
+
+    const handleNovaMensagemPublica = (msg) => {
+          setMensagens(prev => [...prev, msg]);
+    };
+
+    socket.on('sendMensagemParaSalas', handleNovaMensagemPublica);
+   socket.on('sendMensagemPrivada', handleNovaMensagemPrivada);
+  
+  return () => {
+   if (atual === 'Pública') {
+    socket.off('sendMensagemParaSalas', handleNovaMensagemPublica);
+   } else if (atual !== 'sedran' && atual !== 'Pública') { 
+    socket.off('sendMensagemPrivada', handleNovaMensagemPrivada);
+    setOffline(false);
+   }
+  };
+  
+ }, [socket, atual]);
 
 
  return (
@@ -64,9 +96,11 @@ const AreaDasMensagens = ({atual, userName, mensagensComIa}) => {
      return <Mensagem 
      key={key} 
      nome={msg.user} 
-     texto={msg.mensagem}/>
+     texto={msg.mensagem}
+     handleMensagemPrivada={handleMensagemPrivada}/>
     }
-   })}
+   })} 
+   {offline && <div className='offline'>{atual} está offline!</div>}
   </div>
  )
 }

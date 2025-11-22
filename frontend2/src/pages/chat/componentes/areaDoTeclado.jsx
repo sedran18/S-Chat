@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import './areaDoTeclado.css';
 import { SocketContext } from '../../../socketContext';
 
-export default function AreaDoTeclado({atual, handleMensagensComIa}) {
+export default function AreaDoTeclado({atual, handleMensagensComIa, setMensagens, userName, setOffline}) {
     const [txt, setTxt] = useState('');
     const [emojisActive, setEmojisActive] = useState(false); 
     const emojisLista = ['😀', '❤️', '🙏','🤡','👍','👽','🤣','😡','🤥','🧑‍💻','👩‍💻','🚀','🛸','💻','💀','😴','🤤'];
@@ -39,7 +39,7 @@ export default function AreaDoTeclado({atual, handleMensagensComIa}) {
         }, 0); 
     };
 
-    const handleSendMessage = e => {
+    const handleSendMessage = async e => {
         const textoLimpo = txt.trim();
         if (!textoLimpo) {
             setTxt(''); 
@@ -52,7 +52,35 @@ export default function AreaDoTeclado({atual, handleMensagensComIa}) {
         } else if (atual === 'sedran') {
             handleMensagensComIa(txt);
             setTxt('');
+        } else {
+        const mensagemUsuario = {user: userName, mensagem: textoLimpo};
+        
+        setMensagens(prev => [...prev, mensagemUsuario]); 
+        setTxt('');
+
+        try {
+            await new Promise((resolve, reject) => {
+                
+                const onError = (err) => {
+                    if (err.evento === 'sendMensagemPrivada') {
+                        socket.off('erro', onError); 
+                        reject(new Error(err.mensagem));
+                    }
+                };
+
+                socket.once('erro', onError);
+                
+                socket.emit('sendMensagemPrivada', {toName: atual, mensagem: textoLimpo});
+                
+            });
+            
+            setOffline(false); 
+
+        } catch (err) {
+            setMensagens(prev => prev.slice(0, prev.length - 1)); 
+            setOffline(true);
         }
+    }
 
     }
 

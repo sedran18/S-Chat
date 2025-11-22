@@ -1,10 +1,20 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Conversa from "./conversa";
 import './area1.css';
 
-export default function Area1({nome, none, setConversaAtual, atual}) {
-    const initialValue =  ['sedran', 'Pública']
-    const [conversas, setConversas] = useState(initialValue);
+export default function Area1({nome, none, setConversaAtual, conversas, setConversas, atual}) {
+
+    useEffect(() => {
+        setConversas(prevConversas => {
+            if (prevConversas.includes(atual)) {
+                return prevConversas;
+            }
+            
+            return [...prevConversas, atual];
+        });
+        
+    }, [atual]);
+
     return (
         <div className={`area1 ${none && 'none'}`}>
             <div className="name">
