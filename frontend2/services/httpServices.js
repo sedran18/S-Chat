@@ -1,4 +1,4 @@
-const BACK_URI = import.meta.env.VITE_BACK_URI || 'http://localhost:3000';
+const BACK_URI = import.meta.env.VITE_BACK_URI;
 
 function getAuthHeaders() {
   const token = localStorage.getItem('token');
