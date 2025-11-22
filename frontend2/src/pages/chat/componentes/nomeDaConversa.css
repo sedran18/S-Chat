@@ -2,9 +2,19 @@
     width: 100%;
     height: 15vh;
     background-color: var(--primary-bg);
-    display: grid;
-    place-items: center;
-    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
     color: var(--text-color);
     letter-spacing: 0.3rem;
+    position: relative;
+}
+.usuarios-ativo {
+    position: absolute;
+    color: var(--accent-color);
+    left: 10px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }

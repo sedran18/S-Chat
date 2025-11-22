@@ -30,6 +30,7 @@ function initSocket(server) {
         socket.userNome = user.nome;
 
         socket.emit('login', user.toJSON());
+        io.emit('usuariosOnline', total);
       } catch (err) { 
         console.error("Erro no login:", err.message);
         socket.emit('erro', {evento: 'login', mensagem: err.message});
@@ -139,7 +140,8 @@ function initSocket(server) {
 
         // DESCONECTAR
         socket.on('disconnect', async () => {
-            io.emit('usuarioDesconectou', socket.userNome)
+            io.emit('usuarioDesconectou', socket.userNome);
+            io.emit('usuariosOnline', total);
             await User.deleteOne({ nome: socket.userNome });
             total -= 1;
         });

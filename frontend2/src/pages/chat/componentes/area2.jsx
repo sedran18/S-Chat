@@ -7,7 +7,9 @@ import { respostaIA } from '../../../../services/httpServices.js';
 import { useState } from 'react';
 
 export default function Area2({atual, nomeUsuario, setAtual, setListaConversas}) {
-const [mensagensComIa, setMensagensComIa] = useState([{user: 'sedran', mensagem: `Olá ${nomeUsuario}! Eu sou sedran a Inteligência Artificial do S-Chat. Você tem um limite de 5 mensagens, mas não tenha receio de conversar comigo 😁!`}]);
+const [mensagensComIa, setMensagensComIa] = useState([{user: 'sedran', mensagem: `✨ Olá ${nomeUsuario}! Eu sou a Sedran.
+Se precisar de ajuda, uma explicação rápida ou resolver algo complicado, é só me chamar.
+Estou aqui para deixar tudo mais simples — vamos começar?`}]);
 const [mensagens, setMensagens] = useState([]);
 const [offline, setOffline] = useState(false);
 
