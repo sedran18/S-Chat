@@ -1,11 +1,12 @@
 import './form.css';
+import logo from '../../../assets/logo2.png';
 
 export default function Form({ handleLogin, nome, setNome, erro, carregando = false }) {
 
     return (
         <form className="login-form" onSubmit={handleLogin}>
             
-            <img src='../../../../assets/logo2.png' alt="Logo" className="logo-img" />
+            <img src={logo} alt="Logo" className="logo-img" />
             
             <input 
                 type="text"
