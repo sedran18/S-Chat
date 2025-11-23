@@ -19,6 +19,9 @@ O S-Chat é um aplicativo de bate-papo completo construído com tecnologias mode
 * **Interface de Chat:** Exibição de conversas públicas, privadas e com a IA (`sedran`).
 * **Login Dinâmico:** Criação de usuário via HTTP e login de sessão via Socket.io.
 * **Experiência em Tempo Real:** Atualização imediata de mensagens e status de conexão.
+* **Mobile-first:** Layout responsivo priorizando telas menores.
+
+⚠️ Obs: Os usuário não são persistentes, a partir do momento que o usuário é desconectado (ao atualizar a página por exemplo), ele é removido do banco de dados.
 
 ## ⚙️ Tecnologias Utilizadas
 
@@ -95,3 +98,18 @@ Para executar os testes unitários e de integração (que utilizam `mongodb-memo
 
 ```bash
 npm test
+```
+
+## 🌐 Links do Projeto
+
+Este projeto **S-Chat** é desenvolvido **sem fins lucrativos**, como um projeto pessoal de aprendizado e demonstração de tecnologias modernas (Node.js, React, Socket.io, MongoDB e integração com IA).
+
+- **Frontend (S-Chat):** [https://s-chat-frontend.onrender.com](https://s-chat-frontend.onrender.com)  
+- **Backend (API):** [https://srv-d4h247pr0fns739vdrm0.onrender.com](https://srv-d4h247pr0fns739vdrm0.onrender.com)  
+- **LinkedIn do Desenvolvedor:** [https://www.linkedin.com/in/gabriel-nardes/](https://www.linkedin.com/in/gabriel-nardes/)
+
+## 🎬 Demonstração
+
+Abaixo está um vídeo explicativo mostrando o funcionamento do S-Chat:
+
+![Demonstração do S-Chat](frontend2/src/assets/videoReadme.gif)
