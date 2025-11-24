@@ -21,7 +21,7 @@
 .none {
     display: none;
 }
-@media (min-width: 920px) {
+@media (min-width: 920px), (orientation: landscape) {
     .area1 {
         position: static; 
         width: 40%; 

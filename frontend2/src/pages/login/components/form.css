@@ -16,6 +16,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   height: 70vh;
+  max-height: 540px;
 }
 
 .login-form img {
@@ -76,4 +77,19 @@
     margin-top: -50px;
     background: rgba(255, 0, 0, 0.288);
     font-size: 1.2rem;
+}
+
+@media (orientation: landscape) {
+  .login-form {
+  width: 70%; 
+  height: 80dvh;
+  gap: 2rem;
+}
+}
+
+@media (min-height: 900px ) {
+    .login-form {
+      height: 60dvh;
+      gap: 5rem;
+    }
 }
