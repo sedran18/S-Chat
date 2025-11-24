@@ -43,8 +43,8 @@ O S-Chat é um aplicativo de bate-papo completo construído com tecnologias mode
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [URL_DO_SEU_REPOSITORIO]
-    cd s-chat-api # ou o nome da pasta do backend
+    git clone https://github.com/sedran18/S-Chat.git
+    cd S-chat/backend
     ```
 
 2.  **Instale as dependências:**
@@ -72,7 +72,7 @@ O S-Chat é um aplicativo de bate-papo completo construído com tecnologias mode
 
 1.  **Navegue até o diretório do frontend:**
     ```bash
-    cd ../frontend2 # ou o nome da pasta do frontend
+    cd ../frontend2 
     ```
 
 2.  **Instale as dependências:**
@@ -105,7 +105,7 @@ npm test
 Este projeto **S-Chat** é desenvolvido **sem fins lucrativos**, como um projeto pessoal de aprendizado e demonstração de tecnologias modernas (Node.js, React, Socket.io, MongoDB e integração com IA).
 
 - **Frontend (S-Chat):** [https://s-chat-frontend.onrender.com](https://s-chat-frontend.onrender.com)  
-- **Backend (API):** [https://srv-d4h247pr0fns739vdrm0.onrender.com](https://srv-d4h247pr0fns739vdrm0.onrender.com)  
+- **Backend (API):** [https://srv-d4h247pr0fns739vdrm0.onrender.com](https://srv-d4h247pr0fns739vdrm0.onrender.com)
 - **LinkedIn do Desenvolvedor:** [https://www.linkedin.com/in/gabriel-nardes/](https://www.linkedin.com/in/gabriel-nardes/)
 
 ## 🎬 Demonstração
