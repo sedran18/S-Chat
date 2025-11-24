@@ -82,7 +82,7 @@ useEffect(() => {
    {mensagens.map((msg, index) => {
         if (!msg || !msg.user) return null;
         
-        const isMine = msg.user === userName;
+        const isMine = msg.user === userName.toLowerCase();
         const key = `${msg.user}-${index}`; 
 
     if (isMine) {

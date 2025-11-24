@@ -15,7 +15,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 70vh;
+  height: 70%;
   max-height: 540px;
 }
 
@@ -86,7 +86,11 @@
   gap: 2rem;
 }
 }
-
+@media (min-width: 920px) {
+  .login-form {
+    gap: 4rem;
+  }
+}
 @media (min-height: 900px ) {
     .login-form {
       height: 60dvh;
