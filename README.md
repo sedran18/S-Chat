@@ -6,7 +6,7 @@ O S-Chat é um aplicativo de bate-papo completo construído com tecnologias mode
 
 ### Backend (Node.js/Express)
 * **Autenticação JWT:** Sistema seguro para criação e exclusão de usuários.
-* **MongoDB/Mongoose:** Persistência de dados para usuários e mensagens (públicas e privadas).
+* **MongoDB/Mongoose:** Armazenamento do usuário temporariamente  e persistência de mensagens públicas.
 * **WebSockets (Socket.io):** Comunicação em tempo real para envio e recebimento de mensagens.
 * **Bate-papo com IA:** Integração com o modelo **Gemini** (apelidado de "Sedran") para:
     * `POST /api/ia/resposta`: Obter respostas diretas da IA.
